@@ -22,6 +22,53 @@
 - A tecnologia escolhida para fazer o gerenciamento de containeres foi o **Docker**
 
 # Docker
+
+- O Docker é separado em 4 partes:
+
+1. Imagem
+2. Container
+3. Volume
+4. Redes
+
+---
+
+## Imagem:
+
+- A imagem do docker é gerada por um arquivo chamado **Dockerfile**, que é responsável por especificar e instruir como a imagem deve ser feita:
+
+```
+FROM node:22.9 AS build
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn
+
+COPY . .
+
+RUN yarn run build
+RUN yarn --production && yarn cache clean
+
+FROM node:22.9.0-alpine3.20
+
+WORKDIR /app
+
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
+
+EXPOSE 3000
+
+CMD ["yarn", "run", "start:prod"]
+```
+
+- Para saber mais sobre o Dockerfile, [Acesse aqui](https://docs.docker.com/reference/dockerfile/).
+- Para dar build, e gerar a imagem, é necessário usar `docker build [OPTIONS] <path>`, sendo as OPTIONS consultadas pelo `docker build --help`
+- Após a imagem ter sido buildada, você poderá executar pelo comando `docker run ...`
+
+---
+
 build
 run
 exec
